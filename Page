@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age of Wonders 4 | Multiplayer Stability Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F6F1;
+            color: #334155;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 40vh;
+            max-height: 350px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .tab-active {
+            background-color: #F59E0B;
+            color: #ffffff;
+        }
+        .tab-inactive {
+            background-color: #e2e8f0;
+            color: #475569;
+        }
+        .filter-active {
+            background-color: #475569;
+            color: #ffffff;
+            border-color: #475569;
+        }
+        .filter-inactive {
+            background-color: transparent;
+            color: #475569;
+            border-color: #cbd5e1;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">AoW4 Multiplayer Stability Guide</h1>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                An interactive guide based on r/AOW4 community findings to help you diagnose, solve, and understand common desyncs, lag, and crashes in multiplayer games.
+            </p>
+        </header>
+
+        <nav class="flex justify-center mb-12 rounded-lg p-1.5 bg-slate-200/60 max-w-md mx-auto">
+            <button data-tab="diagnose" class="nav-tab w-1/3 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Diagnose</button>
+            <button data-tab="solutions" class="nav-tab w-1/3 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Solutions</button>
+            <button data-tab="analysis" class="nav-tab w-1/3 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Analysis</button>
+        </nav>
+
+        <main>
+            <section id="diagnose-section" class="content-section space-y-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Diagnose Your Issue</h2>
+                    <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
+                        Multiplayer problems fall into three main categories. Click a category on the chart to filter the detailed bug list below and pinpoint the specific issues you're facing.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="bugChart"></canvas>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex flex-wrap justify-center gap-3 mb-8">
+                        <button data-filter="All" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">All Issues</button>
+                        <button data-filter="Desync" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Desyncs</button>
+                        <button data-filter="Lag/Performance" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Lag & Performance</button>
+                        <button data-filter="Crash" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Crashes</button>
+                    </div>
+                    <div id="bug-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+                </div>
+            </section>
+
+            <section id="solutions-section" class="content-section hidden space-y-12">
+                 <div>
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Find Your Solution</h2>
+                    <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
+                        Here is a comprehensive checklist of community-sourced workarounds. Filter by the problem you want to address to see the most relevant strategies.
+                    </p>
+                </div>
+                 <div>
+                    <div class="flex flex-wrap justify-center gap-3 mb-8">
+                        <button data-filter="All" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">All Solutions</button>
+                        <button data-filter="Desyncs" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Desyncs</button>
+                        <button data-filter="Performance" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Performance</button>
+                        <button data-filter="Crashes" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Crashes</button>
+                    </div>
+                    <div id="solution-list" class="max-w-4xl mx-auto space-y-4">
+                    </div>
+                </div>
+            </section>
+
+            <section id="analysis-section" class="content-section hidden space-y-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Understand the Cause</h2>
+                    <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
+                        For those curious about the "why," this section summarizes the community's analysis on the likely root causes of these stability issues.
+                    </p>
+                </div>
+                <div id="analysis-accordion" class="max-w-3xl mx-auto space-y-4">
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-16 border-t border-slate-200 pt-8">
+            <p class="text-slate-500">
+                Created based on analysis of discussions from the r/AOW4 community. This is an unofficial guide.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const bugsData = [
+                { category: 'Desync', manifestation: 'Combat desync with altered outcome', triggers: 'Enemy has 1 unit left; During/end of combat', impact: 'Forced battle replay; Invalidated player choices/skill; Frustration.' },
+                { category: 'Desync', manifestation: 'Turn-based desync', triggers: 'Simultaneous turns + player decision; End of turn; Observing AI combat; Rejoining game', impact: 'Frequent reloads; Game stuck "waiting for player"; Interrupted flow.' },
+                { category: 'Desync', manifestation: 'Game setting/contextual desync', triggers: 'Simultaneous turns mode; Large maps/high player/AI count; Windowed mode + focus loss; Mismatched game versions', impact: 'Limits game setup choices; Requires careful coordination.' },
+                { category: 'Desync', manifestation: 'Unrecoverable desync', triggers: 'Combat replay freezes/fails', impact: 'Forced to revert to older save; Loss of progress.' },
+                { category: 'Lag/Performance', manifestation: 'AI turn lag', triggers: 'AI processing turns, especially in late game', impact: 'Long wait times between player turns; Sluggish game pace.' },
+                { category: 'Lag/Performance', manifestation: 'Large battle lag', triggers: 'Battles with many units (e.g., 6-army, 9v9)', impact: 'Tactical combat becomes slow/unmanageable.' },
+                { category: 'Lag/Performance', manifestation: 'General sluggishness/stuttering', triggers: 'Mid/late game; Start of battles; Low FPS', impact: 'Degraded game fluidity; Poor responsiveness.' },
+                { category: 'Crash', manifestation: 'End-of-turn crash', triggers: 'All players end turn (post-hotfix noted)', impact: 'Session unplayable; Prevents game progression.' },
+                { category: 'Crash', manifestation: 'DLC-related crash', triggers: 'Cycling specific new faction leaders (e.g., Dragon Lords)', impact: 'Limits use of new content in multiplayer.' },
+                { category: 'Crash', manifestation: 'General crash / Infinite crash loop', triggers: 'Extended play (possible memory leak); Rejoining session (cross-play noted)', impact: 'Loss of progress; Session disruption; Inability to rejoin.' },
+            ];
+
+            const solutionsData = [
+                { issue: 'Desyncs', strategy: 'Use Classic Turns instead of Simultaneous', context: 'Generally more stable. The most highly recommended workaround for desyncs.', tradeOff: 'Slower game pace; less dynamic turns.' },
+                { issue: 'Desyncs', strategy: 'Ensure all players have identical game versions', context: 'Prevents baseline incompatibility. A critical first step; check for beta branches.', tradeOff: 'Requires player coordination.' },
+                { issue: 'Desyncs', strategy: 'Play on smaller maps with fewer players/AI', context: 'Reduces game complexity, which is correlated with fewer desyncs.', tradeOff: 'Limits epic-scale game ambitions.' },
+                { issue: 'Desyncs', strategy: 'Limit/avoid manual AI battles, especially if observed', context: 'Contentious but reported to improve stability by reducing a common trigger.', tradeOff: 'Reduces a core tactical feature of the game.' },
+                { issue: 'Desyncs', strategy: 'Reload game / Revert to previous turn', context: 'The most common immediate action to recover from a desync.', tradeOff: 'Interrupts game flow and causes minor loss of progress.' },
+                { issue: 'Performance', strategy: 'Install game on SSD', context: 'Drastically improves loading times and general performance. Highly recommended.', tradeOff: 'Hardware dependent.' },
+                { issue: 'Performance', strategy: 'Delete old/excessive save files', context: 'Reported to reduce AI turn times and general sluggishness.', tradeOff: 'Requires out-of-game file management.' },
+                { issue: 'Performance', strategy: 'Cap frame rate (e.g., at 60 FPS)', context: 'Can improve smoothness and prevent system overheating for some users.', tradeOff: 'None if your monitor refresh rate is 60Hz.' },
+                { issue: 'Performance', strategy: 'Reduce game resolution', context: 'Can provide a significant performance boost.', tradeOff: 'Minor visual quality trade-off.' },
+                { issue: 'Crashes', strategy: 'Play without mods (for troubleshooting)', context: 'The first step to diagnose if a mod is the cause of instability.', tradeOff: 'Misses out on mod-added content/features.' },
+                { issue: 'Crashes', strategy: 'Verify game file integrity via Steam', context: 'A standard troubleshooting step that can repair corrupted files causing crashes.', tradeOff: 'Takes a few minutes to run.' },
+                { issue: 'Crashes', strategy: 'Limit session length (if memory leak suspected)', context: 'A precautionary measure to mitigate crashes after extended play.', tradeOff: 'Inconvenient; does not solve the root cause.' },
+            ];
+
+            const analysisData = [
+                { title: 'Netcode & State Management', content: 'The wide variety of desync triggers (combat, turn processing, game settings) suggests a systemic challenge in keeping the game state perfectly synchronized across all players. The system may have multiple points of weakness where states can diverge without a robust way to reconcile them. Desyncs that alter combat outcomes are particularly critical, as they invalidate player skill and suggest the post-desync "replay" is not a true replay but a re-simulation that can produce different results.' },
+                { title: 'AI & Scalability Issues', content: 'Performance degrading in the mid-to-late game, especially during AI turns, points to underlying scalability problems. As the number of units, cities, and overall game complexity grows, the AI\'s decision-making becomes more computationally intensive. This creates a bottleneck that all players experience as lag, suggesting the AI algorithms are not fully optimized for a smooth multiplayer environment.' },
+                { title: 'Simultaneous Turns Conundrum', content: 'The "Simultaneous Turns" mode is consistently reported as a major source of desyncs. This feature requires the game to manage and resolve concurrent actions from multiple players into a single, coherent state. The high rate of failure implies that the mechanisms for collecting, ordering, and validating these actions are not robust enough, leading to race conditions or other inconsistencies.' },
+                { title: 'Patches & QA Complications', content: 'The emergence of new crashes or regressions in stability after patches or DLC releases indicates potential gaps in multiplayer-specific Quality Assurance (QA). The complexity of the multiplayer environment, with its many variables (player count, settings, cross-play), makes it difficult to test comprehensively, sometimes leading to unintended side effects from updates.' },
+            ];
+
+            const bugList = document.getElementById('bug-list');
+            const solutionList = document.getElementById('solution-list');
+            const analysisAccordion = document.getElementById('analysis-accordion');
+            const bugFilters = document.querySelectorAll('.bug-filter');
+            const solutionFilters = document.querySelectorAll('.solution-filter');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const contentSections = document.querySelectorAll('.content-section');
+            let bugChart;
+
+            function getCategoryColor(category) {
+                switch (category) {
+                    case 'Desync': return 'rgba(245, 158, 11, 0.7)'; // amber-500
+                    case 'Lag/Performance': return 'rgba(99, 102, 241, 0.7)'; // indigo-500
+                    case 'Crash': return 'rgba(239, 68, 68, 0.7)'; // red-500
+                    default: return 'rgba(107, 114, 128, 0.7)'; // gray-500
+                }
+            }
+
+            function getCategoryHighlightColor(category) {
+                switch (category) {
+                    case 'Desync': return 'rgba(245, 158, 11, 1)';
+                    case 'Lag/Performance': return 'rgba(99, 102, 241, 1)';
+                    case 'Crash': return 'rgba(239, 68, 68, 1)';
+                    default: return 'rgba(107, 114, 128, 1)';
+                }
+            }
+            
+            function getCategoryBorderColor(category) {
+                 switch (category) {
+                    case 'Desync': return 'border-amber-500';
+                    case 'Lag/Performance': return 'border-indigo-500';
+                    case 'Crash': return 'border-red-500';
+                    default: return 'border-gray-500';
+                }
+            }
+
+            function renderBugList(filter = 'All') {
+                bugList.innerHTML = '';
+                const filteredBugs = filter === 'All' ? bugsData : bugsData.filter(b => b.category === filter);
+
+                filteredBugs.forEach(bug => {
+                    const card = document.createElement('div');
+                    card.className = `bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-sm transition-all duration-300 border-t-4 ${getCategoryBorderColor(bug.category)}`;
+                    card.innerHTML = `
+                        <h3 class="font-bold text-lg text-slate-800 mb-2">${bug.manifestation}</h3>
+                        <div class="space-y-3 text-sm">
+                            <p><strong class="font-semibold text-slate-600">Triggers:</strong> <span class="text-slate-500">${bug.triggers}</span></p>
+                            <p><strong class="font-semibold text-slate-600">Impact:</strong> <span class="text-slate-500">${bug.impact}</span></p>
+                        </div>
+                    `;
+                    bugList.appendChild(card);
+                });
+                
+                updateBugFilterButtons(filter);
+            }
+
+            function renderSolutionList(filter = 'All') {
+                solutionList.innerHTML = '';
+                const filterMap = {
+                    'Desyncs': 'Desyncs',
+                    'Performance': 'Performance',
+                    'Crashes': 'Crashes'
+                };
+                const filteredSolutions = filter === 'All' ? solutionsData : solutionsData.filter(s => s.issue === filterMap[filter]);
+
+                filteredSolutions.forEach(solution => {
+                    const item = document.createElement('div');
+                    item.className = 'bg-white/80 backdrop-blur-sm rounded-lg p-5 shadow-sm border border-slate-200';
+                    item.innerHTML = `
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1">
+                                <svg class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-semibold text-slate-800">${solution.strategy}</h4>
+                                <p class="text-sm text-slate-600 mt-1">${solution.context}</p>
+                                <p class="text-xs text-amber-700 bg-amber-100/60 rounded-full px-2 py-0.5 inline-block mt-2"><strong>Trade-off:</strong> ${solution.tradeOff}</p>
+                            </div>
+                        </div>
+                    `;
+                    solutionList.appendChild(item);
+                });
+                 updateSolutionFilterButtons(filter);
+            }
+
+            function renderAnalysisAccordion() {
+                analysisAccordion.innerHTML = '';
+                analysisData.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-white/80 backdrop-blur-sm rounded-lg shadow-sm overflow-hidden border border-slate-200';
+                    div.innerHTML = `
+                        <button class="accordion-toggle w-full flex justify-between items-center text-left p-5 font-semibold text-slate-700 hover:bg-slate-50 transition-colors duration-200">
+                            <span>${item.title}</span>
+                            <svg class="accordion-icon h-5 w-5 text-slate-500 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-5 pt-0 text-slate-600">${item.content}</div>
+                        </div>
+                    `;
+                    analysisAccordion.appendChild(div);
+                });
+
+                document.querySelectorAll('.accordion-toggle').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const content = button.nextElementSibling;
+                        const icon = button.querySelector('.accordion-icon');
+                        button.parentElement.classList.toggle('open');
+                        
+                        if (content.style.maxHeight) {
+                            content.style.maxHeight = null;
+                            icon.style.transform = 'rotate(0deg)';
+                        } else {
+                            content.style.maxHeight = content.scrollHeight + 'px';
+                            icon.style.transform = 'rotate(180deg)';
+                        }
+                    });
+                });
+            }
+
+            function createBugChart() {
+                const ctx = document.getElementById('bugChart').getContext('2d');
+                const labels = ['Desync', 'Lag/Performance', 'Crash'];
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Problem Frequency/Impact',
+                        data: [4, 3, 3], 
+                        backgroundColor: labels.map(l => getCategoryColor(l)),
+                        borderColor: labels.map(l => getCategoryHighlightColor(l)),
+                        borderWidth: 2,
+                        hoverBackgroundColor: labels.map(l => getCategoryHighlightColor(l)),
+                    }]
+                };
+
+                bugChart = new Chart(ctx, {
+                    type: 'polarArea',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                                angleLines: { color: 'rgba(0, 0, 0, 0.05)' },
+                                ticks: {
+                                    display: false,
+                                    backdropColor: 'transparent'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 14, family: 'Inter' },
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: { size: 14, family: 'Inter' },
+                                titleFont: { size: 16, family: 'Inter' }
+                            }
+                        },
+                        onClick: (e, elements) => {
+                            if (elements.length > 0) {
+                                const clickedLabel = labels[elements[0].index];
+                                renderBugList(clickedLabel);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateBugFilterButtons(activeFilter) {
+                bugFilters.forEach(button => {
+                    if (button.dataset.filter === activeFilter) {
+                        button.classList.remove('filter-inactive');
+                        button.classList.add('filter-active');
+                    } else {
+                        button.classList.remove('filter-active');
+                        button.classList.add('filter-inactive');
+                    }
+                });
+            }
+             function updateSolutionFilterButtons(activeFilter) {
+                solutionFilters.forEach(button => {
+                    if (button.dataset.filter === activeFilter) {
+                        button.classList.remove('filter-inactive');
+                        button.classList.add('filter-active');
+                    } else {
+                        button.classList.remove('filter-active');
+                        button.classList.add('filter-inactive');
+                    }
+                });
+            }
+
+            bugFilters.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filter = button.dataset.filter;
+                    renderBugList(filter);
+                });
+            });
+
+            solutionFilters.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filter = button.dataset.filter;
+                    renderSolutionList(filter);
+                });
+            });
+
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+
+                    navTabs.forEach(t => {
+                        t.classList.remove('tab-active');
+                        t.classList.add('tab-inactive');
+                    });
+                    tab.classList.remove('tab-inactive');
+                    tab.classList.add('tab-active');
+
+                    contentSections.forEach(section => {
+                        if (section.id === `${target}-section`) {
+                            section.classList.remove('hidden');
+                        } else {
+                            section.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            function initializeApp() {
+                navTabs[0].click();
+                renderBugList();
+                renderSolutionList();
+                renderAnalysisAccordion();
+                createBugChart();
+            }
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
