@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age of Wonders 4 | Multiplayer Stability Guide</title>
+    <title>AoW4 Multiplayer Stability Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,414 +12,787 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F8F6F1; /* Light cream background */
-            color: #334155; /* Slate-700 */
+            background-color: #FDFBF8;
+            color: #383838;
         }
-       .chart-container {
-            position: relative;
-            margin: auto;
-            height: 40vh;
-            max-height: 350px;
-            width: 100%;
-            max-width: 500px;
+        .nav-active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
         }
-       .tab-active {
-            background-color: #F59E0B; /* Amber-500 */
+        .nav-inactive {
+            color: #6b7280;
+            border-bottom-color: transparent;
+        }
+        .checklist-tab-active {
+            background-color: #3b82f6;
             color: #ffffff;
         }
-       .tab-inactive {
-            background-color: #e2e8f0; /* Slate-200 */
-            color: #475569; /* Slate-600 */
+        .checklist-tab-inactive {
+            background-color: #e5e7eb;
+            color: #374151;
+            hover:bg-gray-300;
         }
-       .filter-active {
-            background-color: #475569; /* Slate-600 */
-            color: #ffffff;
-            border-color: #475569; /* Slate-600 */
-        }
-       .filter-inactive {
-            background-color: transparent;
-            color: #475569; /* Slate-600 */
-            border-color: #cbd5e1; /* Slate-300 */
-        }
-       .accordion-content {
+        .accordion-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
+        }
+        .accordion-content .prose ol, .accordion-content .prose ul { margin-left: 1rem; }
+        .accordion-content .prose p { margin-bottom: 0.5rem; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Adjusted for doughnut chart aesthetics */
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px; /* Can be adjusted if legend takes more space */
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 350px;
+                 max-width: 100%;
+            }
+        }
+        .cause-box {
+            border: 2px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            background-color: #ffffff;
+            transition: all 0.2s ease-in-out;
+        }
+        .cause-box:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .line {
+            background-color: #d1d5db;
+            position: absolute;
+            z-index: -1;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">AoW4 Multiplayer Stability Guide</h1>
-            <p class="max-w-3xl mx-auto text-lg text-slate-600">
-                An interactive guide based on community findings from r/AOW4, other Age of Wonders communities (Planetfall, AoW3), and broader online discussions. This guide aims to help you diagnose, solve, and understand common desyncs, lag, crashes, and connection issues in multiplayer games, with a primary focus on Age of Wonders 4.
-            </p>
-        </header>
-
-        <nav class="flex justify-center mb-12 rounded-lg p-1.5 bg-slate-200/60 max-w-lg mx-auto">
-            <button data-tab="diagnose" class="nav-tab w-1/4 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Diagnose</button>
-            <button data-tab="solutions" class="nav-tab w-1/4 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Solutions</button>
-            <button data-tab="analysis" class="nav-tab w-1/4 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Analysis</button>
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200">
+        <nav class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl font-bold text-blue-600">🛡️</span>
+                    <span class="text-lg font-bold">AoW4 Stability Guide</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#symptoms" class="nav-link nav-inactive font-medium border-b-2 pb-1 transition-colors duration-300">Symptoms</a>
+                    <a href="#causes" class="nav-link nav-inactive font-medium border-b-2 pb-1 transition-colors duration-300">Root Causes</a>
+                    <a href="#checklist" class="nav-link nav-inactive font-medium border-b-2 pb-1 transition-colors duration-300">Workaround Checklist</a>
+                </div>
+            </div>
         </nav>
+    </header>
 
-        <main>
-            <section id="diagnose-section" class="content-section space-y-12">
-                <div>
-                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Diagnose Your Issue</h2>
-                    <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
-                        Multiplayer problems generally fall into several categories. Click a category on the chart to filter the detailed bug list below and pinpoint the specific issues you're facing. This data includes issues reported primarily for AoW4, with some context from other AoW titles.
-                    </p>
-                    <div class="chart-container">
-                        <canvas id="bugChart"></canvas>
-                    </div>
-                </div>
+    <main class="container mx-auto p-4 md:p-8">
 
-                <div>
-                    <div class="flex flex-wrap justify-center gap-3 mb-8">
-                        <button data-filter="All" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">All Issues</button>
-                        <button data-filter="Desync" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Desyncs</button>
-                        <button data-filter="Lag/Performance" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Lag & Performance</button>
-                        <button data-filter="Crash" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Crashes</button>
-                        <button data-filter="Connection" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Connection Issues</button>
-                    </div>
-                    <div id="bug-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    </div>
-                </div>
-            </section>
-
-            <section id="solutions-section" class="content-section hidden space-y-12">
-                 <div>
-                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Find Your Solution</h2>
-                    <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
-                        Here is a comprehensive checklist of community-sourced workarounds. Filter by the problem you want to address to see the most relevant strategies. These include general advice and game-specific tips.
-                    </p>
-                </div>
-                 <div>
-                    <div class="flex flex-wrap justify-center gap-3 mb-8">
-                        <button data-filter="All" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">All Solutions</button>
-                        <button data-filter="Desyncs" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Desyncs</button>
-                        <button data-filter="Performance" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Performance</button>
-                        <button data-filter="Crashes" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Crashes</button>
-                        <button data-filter="Connection" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Connection</button>
-                    </div>
-                    <div id="solution-list" class="max-w-4xl mx-auto space-y-4">
-                    </div>
-                </div>
-            </section>
-
-            <section id="analysis-section" class="content-section hidden space-y-8">
-                <div>
-                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Understand the Cause</h2>
-                    <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
-                        For those curious about the "why," this section summarizes community analysis on the likely root causes of these stability issues, drawing from experiences across the Age of Wonders series.
-                    </p>
-                </div>
-                <div id="analysis-accordion" class="max-w-3xl mx-auto space-y-4">
-                </div>
-            </section>
-        </main>
-
-        <footer class="text-center mt-16 border-t border-slate-200 pt-8">
-            <p class="text-slate-500">
-                Created based on analysis of discussions from r/AOW4, other Age of Wonders communities, and various online forums. This is an unofficial guide.
+        <section id="intro" class="text-center py-12 md:py-20">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Navigating the Nether</h1>
+            <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                An interactive guide to understanding and mitigating the de-syncs, crashes, and connection errors that plague Age of Wonders 4 multiplayer. Use this tool to diagnose your issues and find actionable solutions.
             </p>
-        </footer>
-    </div>
+        </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        <section id="symptoms" class="py-12 md:py-16 bg-white rounded-2xl shadow-sm">
+            <div class="max-w-5xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2">What's Going Wrong?</h2>
+                <p class="text-center text-gray-600 mb-12">Click on the issue you're experiencing most often. This introductory section helps you quickly identify your problem and understand its common manifestations before diving into the causes and solutions.</p>
+                <div id="symptom-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </div>
+        </section>
 
-            const bugsData =', impact: 'Forced battle replay; Invalidated player choices/skill; Frustration.[2]' },
-                { category: 'Desync', manifestation: 'Turn-based desync / "Waiting for Player"', triggers: 'Simultaneous turns + player decision [1]; End of turn [2]; Observing AI combat [1]; Rejoining game [3]; Game stuck "waiting for player".[1, 4]', impact: 'Frequent reloads; Interrupted flow.[1, 2]' },
-                { category: 'Desync', manifestation: 'Game setting/contextual desync', triggers: 'Simultaneous turns mode [2]; Large maps/high player/AI count [2, 3]; Windowed mode + focus loss [2]; Mismatched game versions.[2]', impact: 'Limits game setup choices; Requires careful coordination.' },
-                { category: 'Desync', manifestation: 'Unrecoverable desync / Game Freeze', triggers: 'Combat replay freezes/fails [1]; Player freezes, cannot give orders (AoW4).[5]', impact: 'Forced to revert to older save; Loss of progress [1]; Session blocked.[5]' },
-                { category: 'Desync', manifestation: 'Player state reset many turns back', triggers: 'Severe desync, one player affected while others are current (AoW4).[4]', impact: 'Significant loss of progress for one player, game imbalance.' },
-                { category: 'Lag/Performance', manifestation: 'AI turn lag', triggers: 'AI processing turns, especially in late game (AoW4, Planetfall).[1, 6, 7]', impact: 'Long wait times between player turns; Sluggish game pace.[1, 6]' },
-                { category: 'Lag/Performance', manifestation: 'Large battle lag', triggers: 'Battles with many units (e.g., 6-army, 9v9) (AoW4).[8]', impact: 'Tactical combat becomes slow/unmanageable.' },
-                { category: 'Lag/Performance', manifestation: 'General sluggishness/stuttering', triggers: 'Mid/late game; Start of battles; Low FPS (AoW4).[8]', impact: 'Degraded game fluidity; Poor responsiveness.' },
-                { category: 'Crash', manifestation: 'End-of-turn crash', triggers: 'All players end turn (post-hotfix noted for AoW4).[9]', impact: 'Session unplayable; Prevents game progression.[9]' },
-                { category: 'Crash', manifestation: 'DLC-related crash / Compatibility', triggers: 'Cycling specific new faction leaders (e.g., Dragon Lords in AoW4) [1]; Mismatch in DLC ownership between host/client after hotfix (AoW4).[10]', impact: 'Limits use of new content; Prevents joining games.[1, 10]' },
-                { category: 'Crash', manifestation: 'General crash / Infinite crash loop', triggers: 'Extended play (possible memory leak in AoW4) [8]; Rejoining session (cross-play noted for AoW4) [11]; Frequent crashes during manual fights (Planetfall).[12]', impact: 'Loss of progress; Session disruption; Inability to rejoin.[8, 11]' },
-                // Broader Age of Wonders series / General MP issues
-                { category: 'Connection', manifestation: 'Cannot connect to server / Offline only', triggers: 'Server-side issues; Network configuration problems (Planetfall).[13]', impact: 'Unable to access online multiplayer features.' },
-                { category: 'Connection', manifestation: 'Failed to connect to UDP relay / NAT issues', triggers: 'NAT configuration; Router firmware; ISP blocking (Planetfall PS4, AoW3).[14, 15]', impact: 'Cannot see/join online games; Limited MP experience.' },
-                { category: 'Connection', manifestation: 'Active MP sessions not showing / Internal Error', triggers: 'Paradox account sync issues; Server timeout retrieving session list (AoW4).[16]', impact: 'Unable to access ongoing games; Frustration.' },
-                { category: 'Connection', manifestation: 'Multiplayer disconnects from menu/lobby', triggers: 'Unknown connection stability issues, sometimes resolved by VPN (Planetfall, AoW4).[17]', impact: 'Kicked back to main menu even before joining a game.' },
-                { category: 'Desync', manifestation: 'Host/Player loses multiple turns of progress', triggers: 'Severe desync where save states diverge significantly (AoW4).[18]', impact: 'Game-breaking, requires replaying many turns or abandoning session.' },
-            ];
+        <section id="causes" class="py-12 md:py-20">
+             <div class="max-w-5xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2">Why Does It Happen? Root Causes of Instability</h2>
+                <p class="text-center text-gray-600 mb-12">Multiplayer instability isn't caused by a single bug, but a complex web of interconnected factors. This section helps you understand the core reasons, from the game's architecture to your own setup. The chart below visually represents the relative impact of factors most frequently reported by the community as major triggers for instability.</p>
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm mb-16">
+                   <div class="chart-container">
+                        <canvas id="impactChart"></canvas>
+                   </div>
+                </div>
 
-            const solutionsData =', tradeOff: 'Slower game pace; less dynamic turns.' },
-                { issue: 'Desyncs', strategy: 'Ensure all players have identical game versions & DLC status', context: 'Prevents baseline incompatibility. Check beta branches.[2] DLC mismatches can cause crashes.[10]', tradeOff: 'Requires player coordination.' },
-                { issue: 'Desyncs', strategy: 'Reload game / Revert to previous turn (AoW4)', context: 'Common immediate action for desyncs. AoW4 has auto-rollback features.[1, 2, 5]', tradeOff: 'Interrupts flow, minor progress loss. Reverting can sometimes go back multiple turns.[19]' },
-                { issue: 'Performance', strategy: 'Install game on SSD', context: 'Drastically improves loading and general performance (AoW4).[1, 8]', tradeOff: 'Hardware dependent.' },
-                { issue: 'Performance', strategy: 'Delete old/excessive save files (AoW4)', context: 'Reported to reduce AI turn times and sluggishness.[1, 8]', tradeOff: 'Out-of-game file management.' },
-                { issue: 'Crashes', strategy: 'Play without mods (for troubleshooting)', context: 'First step to diagnose if mods cause instability (General).[9]', tradeOff: 'Misses mod benefits.' },
-                { issue: 'Crashes', strategy: 'Verify game file integrity via Steam', context: 'Standard step, repairs corrupted files (General).[9]', tradeOff: 'Takes a few minutes.' },
-                // Broader / Network Related
-                { issue: 'Connection', strategy: 'Check NAT/Firewall/Port Forwarding', context: 'For general connection problems, often cited for P2P games like AoW3, Planetfall.[14, 15, 20, 21]', tradeOff: 'Can be technical to configure.' },
-                { issue: 'Connection', strategy: 'Try using a VPN', context: 'May help with routing issues if direct connection fails (AoW4, Planetfall).[16, 17]', tradeOff: 'May introduce its own latency; not a guaranteed fix.' },
-                { issue: 'Desyncs', strategy: 'Disable spectator mode for non-participants (AoW4)', context: 'Reduces network load and potential desync triggers, especially with many players.[5, 22]', tradeOff: 'Less engagement for waiting players.' },
-                { issue: 'Desyncs', strategy: 'Ensure host & all players have stable, sufficient internet (esp. upload)', context: 'Crucial for P2P games (AoW3) and general MP stability (AoW4).[18, 20]', tradeOff: 'May not be controllable by all players.' },
-                { issue: 'Performance', strategy: 'Update GPU drivers', context: 'General advice, can resolve some instability (General).[8, 23]', tradeOff: 'Usually straightforward.' },
-                { issue: 'Performance', strategy: 'Cap frame rate / Reduce resolution / Adjust VSync (AoW4, AoW3)', context: 'Can improve smoothness, prevent overheating.[8, 24]', tradeOff: 'Minor visual quality trade-off possible.' },
-                { issue: 'Crashes', strategy: 'Check for hardware issues (e.g., CPU overheating)', context: 'If problems are persistent and system-specific (Planetfall example).[12]', tradeOff: 'May require hardware diagnostics or repair.' },
-                { issue: 'Connection', strategy: 'Try creating a new Paradox account (AoW4)', context: 'Reported as a workaround if active MP sessions are not showing, suggesting account-specific glitches.[16]', tradeOff: 'Inconvenient, loses progress/settings tied to old account.' },
-                { issue: 'Desyncs', strategy: 'Play on smaller maps with fewer players/AI (AoW4)', context: 'Reduces game complexity, correlated with fewer desyncs.[2, 25]', tradeOff: 'Limits epic-scale game ambitions.' },
-            ];
-
-            const analysisData =, suggesting systemic challenges in maintaining perfect game state synchronization. Older titles like AoW3 utilized P2P networking [20], making individual connections critical. Issues like one player\'s state being rolled back significantly while others remain current highlight severe sync problems in AoW4.[4] The "Guide to Fixing Out of Syncs" for AoW4 acknowledges these as game state mismatches.[5]' },
-                { title: 'AI & Scalability Issues (Series-Wide)', content: 'Performance often degrades in mid-to-late game, especially during AI turns. This is noted in AoW4 [1, 6] and was a known issue in Planetfall where late-game AI processing took considerable time.[7] As game complexity (units, cities) grows, AI decision-making becomes computationally intensive, creating bottlenecks experienced as lag by all players.' },
-                { title: 'Simultaneous Turns Challenges (AoW4 & AoW3)', content: 'Simultaneous turns, while speeding up gameplay, are a consistent source of desyncs in AoW4.[1, 2, 3] AoW3 also had complexities where simultaneous inputs were queued and processed sequentially, leading to perceived delays if AI was active.[20, 24] This highlights the difficulty in managing concurrent actions and resolving them into a coherent state for all players.' },
-                { title: 'External Factors & Connectivity (Series-Wide)', content: 'Many multiplayer problems stem from factors outside direct game code. NAT traversal, firewall configurations, and router issues are common culprits, especially in P2P models (AoW3, Planetfall).[14, 15, 21] ISP stability and even Paradox account-level glitches (AoW4 session list issues [16]) can prevent or disrupt play. VPNs sometimes offer workarounds, pointing to routing problems.[16, 17]' },
-                { title: 'Patches, DLCs & QA (Series-Wide)', content: 'New content releases (DLCs) or patches have sometimes introduced new bugs or regressions in stability across different AoW titles. AoW4 saw crashes linked to Dragon Lords DLC [1] and DLC compatibility issues post-hotfix.[10] Planetfall had patches addressing specific crashes and MP bugs.[26] This underscores the ongoing challenge of maintaining stability in evolving, complex strategy games.' },
-            ];
-
-
-            const bugList = document.getElementById('bug-list');
-            const solutionList = document.getElementById('solution-list');
-            const analysisAccordion = document.getElementById('analysis-accordion');
-            const bugFilters = document.querySelectorAll('.bug-filter');
-            const solutionFilters = document.querySelectorAll('.solution-filter');
-            const navTabs = document.querySelectorAll('.nav-tab');
-            const contentSections = document.querySelectorAll('.content-section');
-            let bugChart;
-
-            function getCategoryColor(category) {
-                switch (category) {
-                    case 'Desync': return 'rgba(245, 158, 11, 0.7)'; // amber-500
-                    case 'Lag/Performance': return 'rgba(99, 102, 241, 0.7)'; // indigo-500
-                    case 'Crash': return 'rgba(239, 68, 68, 0.7)'; // red-500
-                    case 'Connection': return 'rgba(22, 163, 74, 0.7)'; // green-600
-                    default: return 'rgba(107, 114, 128, 0.7)'; // gray-500
-                }
-            }
-
-            function getCategoryHighlightColor(category) {
-                switch (category) {
-                    case 'Desync': return 'rgba(245, 158, 11, 1)';
-                    case 'Lag/Performance': return 'rgba(99, 102, 241, 1)';
-                    case 'Crash': return 'rgba(239, 68, 68, 1)';
-                    case 'Connection': return 'rgba(22, 163, 74, 1)';
-                    default: return 'rgba(107, 114, 128, 1)';
-                }
-            }
-            
-            function getCategoryBorderColor(category) {
-                 switch (category) {
-                    case 'Desync': return 'border-amber-500';
-                    case 'Lag/Performance': return 'border-indigo-500';
-                    case 'Crash': return 'border-red-500';
-                    case 'Connection': return 'border-green-600';
-                    default: return 'border-gray-500';
-                }
-            }
-
-            function renderBugList(filter = 'All') {
-                bugList.innerHTML = '';
-                const filteredBugs = filter === 'All'? bugsData : bugsData.filter(b => b.category === filter);
-
-                filteredBugs.forEach(bug => {
-                    const card = document.createElement('div');
-                    card.className = `bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-sm transition-all duration-300 border-t-4 ${getCategoryBorderColor(bug.category)}`;
-                    card.innerHTML = `
-                        <h3 class="font-bold text-lg text-slate-800 mb-2">${bug.manifestation}</h3>
-                        <div class="space-y-3 text-sm">
-                            <p><strong class="font-semibold text-slate-600">Triggers/Context:</strong> <span class="text-slate-500">${bug.triggers}</span></p>
-                            <p><strong class="font-semibold text-slate-600">Impact:</strong> <span class="text-slate-500">${bug.impact}</span></p>
+                <h3 class="text-2xl font-bold text-center mb-12">The Four Main Pillars of Instability</h3>
+                <div id="cause-diagram" class="relative max-w-4xl mx-auto">
+                    <div class="relative flex justify-center items-center mb-16">
+                         <div class="cause-box bg-blue-500 text-white border-blue-500 w-48 z-10">
+                            <h4 class="font-bold text-lg">AoW4 Instability</h4>
                         </div>
-                    `;
-                    bugList.appendChild(card);
-                });
-                
-                updateBugFilterButtons(filter);
-            }
-
-            function renderSolutionList(filter = 'All') {
-                solutionList.innerHTML = '';
-                const filterMap = {
-                    'Desyncs': 'Desyncs',
-                    'Performance': 'Performance',
-                    'Crashes': 'Crashes',
-                    'Connection': 'Connection'
-                };
-                const filteredSolutions = filter === 'All'? solutionsData : solutionsData.filter(s => s.issue === filterMap[filter] |
-| s.issue === filter);
-
-
-                filteredSolutions.forEach(solution => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-white/80 backdrop-blur-sm rounded-lg p-5 shadow-sm border border-slate-200';
-                    item.innerHTML = `
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-1">
-                                <svg class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="font-semibold text-slate-800">${solution.strategy}</h4>
-                                <p class="text-sm text-slate-600 mt-1">${solution.context}</p>
-                                <p class="text-xs text-amber-700 bg-amber-100/60 rounded-full px-2 py-0.5 inline-block mt-2"><strong>Trade-off:</strong> ${solution.tradeOff}</p>
-                            </div>
+                    </div>
+                   
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+                        <div id="cause-game" class="cause-box cursor-pointer">
+                            <h4 class="font-bold">🎮 Core Game</h4>
+                            <p class="text-sm text-gray-500 mt-1">Architecture & Game-Specific Triggers</p>
                         </div>
-                    `;
-                    solutionList.appendChild(item);
-                });
-                 updateSolutionFilterButtons(filter);
-            }
-
-            function renderAnalysisAccordion() {
-                analysisAccordion.innerHTML = '';
-                analysisData.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'bg-white/80 backdrop-blur-sm rounded-lg shadow-sm overflow-hidden border border-slate-200';
-                    div.innerHTML = `
-                        <button class="accordion-toggle w-full flex justify-between items-center text-left p-5 font-semibold text-slate-700 hover:bg-slate-50 transition-colors duration-200">
-                            <span>${item.title}</span>
-                            <svg class="accordion-icon h-5 w-5 text-slate-500 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div class="accordion-content">
-                            <div class="p-5 pt-0 text-slate-600">${item.content}</div>
+                        <div id="cause-network" class="cause-box cursor-pointer">
+                           <h4 class="font-bold">🌐 Network</h4>
+                           <p class="text-sm text-gray-500 mt-1">Your Connection, Router & ISP</p>
                         </div>
-                    `;
-                    analysisAccordion.appendChild(div);
-                });
+                        <div id="cause-system" class="cause-box cursor-pointer">
+                            <h4 class="font-bold">💻 Your System</h4>
+                            <p class="text-sm text-gray-500 mt-1">PC Hardware & Software Conflicts</p>
+                        </div>
+                         <div id="cause-mods" class="cause-box cursor-pointer">
+                            <h4 class="font-bold">🛠️ Mods & DLC</h4>
+                            <p class="text-sm text-gray-500 mt-1">Custom Content & Add-ons</p>
+                        </div>
+                    </div>
+                </div>
 
-                document.querySelectorAll('.accordion-toggle').forEach(button => {
-                    button.addEventListener('click', () => {
-                        const content = button.nextElementSibling;
-                        const icon = button.querySelector('.accordion-icon');
-                        button.parentElement.classList.toggle('open');
-                        
-                        if (content.style.maxHeight) {
-                            content.style.maxHeight = null;
-                            icon.style.transform = 'rotate(0deg)';
-                        } else {
-                            content.style.maxHeight = content.scrollHeight + 'px';
-                            icon.style.transform = 'rotate(180deg)';
-                        }
-                    });
-                });
+                <div id="cause-details" class="mt-12 bg-white p-6 rounded-2xl shadow-sm hidden">
+                    <h4 id="cause-detail-title" class="text-2xl font-bold mb-4"></h4>
+                    <div id="cause-detail-content" class="prose max-w-none text-gray-700"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="checklist" class="py-12 md:py-16">
+             <div class="max-w-5xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2">The Ultimate Workaround Checklist</h2>
+                <p class="text-center text-gray-600 mb-12">Here is a comprehensive list of potential fixes and best practices, organized by category. Start with the "Essential Basics" and work your way through the more advanced steps if your issues persist. This checklist is your primary tool for actively improving game stability.</p>
+
+                <div class="bg-white rounded-2xl shadow-sm p-2 md:p-4">
+                    <div id="checklist-tabs" class="flex flex-wrap justify-center gap-2 mb-6">
+                    </div>
+                    <div id="checklist-content" class="space-y-2">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-100 border-t mt-16">
+        <div class="container mx-auto py-6 px-4 text-center text-gray-500">
+            <p>This interactive guide is based on a synthesis of community-reported issues and troubleshooting tips. Created to help the Age of Wonders 4 community.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const data = {
+        symptoms: [
+            {
+                title: "De-Sync (Out of Sync)",
+                icon: "🔄",
+                description: "Game states differ between players, leading to 'Alternate Timelines,' units in wrong places, or different combat outcomes.",
+                details: "The most common and frustrating issue. It happens when the game simulation on your computer falls out of line with other players. The game will try to fix this by reloading, but this can lead to lost progress."
+            },
+            {
+                title: "Connection Error",
+                icon: "🔌",
+                description: "Seeing messages like 'Internal error,' 'Failed to store session,' or getting stuck on a 'Waiting for player' loop.",
+                details: "These errors usually point to problems with the data exchange between you, other players, and the game servers. It can be caused by your network, the host's network, or server-side issues."
+            },
+            {
+                title: "Crash to Desktop",
+                icon: "💥",
+                description: "The game unexpectedly closes without warning, often when ending a turn or when an AI is starting combat.",
+                details: "Crashes are often a severe symptom of an underlying de-sync or a conflict with mods, drivers, or system software, especially in multiplayer sessions. They result in a complete loss of the current session's progress."
+            },
+            {
+                title: "Game Freeze / Hang",
+                icon: "🧊",
+                description: "The game becomes unresponsive, stuck on 'waiting for combat,' or an AI turn that never ends.",
+                details: "This happens when the game's logic enters a state it can't resolve, often related to AI processing or a specific sequence of events that triggers a bug needing synchronization. You usually have to force-close the game."
+            },
+            {
+                title: "Progress Reversion",
+                icon: "⏪",
+                description: "Losing multiple turns of progress, units teleporting to the capital, or conquered cities reverting to their old owner.",
+                details: "This is a dramatic result of a severe de-sync. When the game tries to recover, it may roll your state back to a much older, known-good save, wiping out significant progress and strategic decisions."
             }
-
-            function createBugChart() {
-                const ctx = document.getElementById('bugChart').getContext('2d');
-                const labels =;
-                const counts = labels.map(label => bugsData.filter(b => b.category === label).length);
-
-                const data = {
-                    labels: labels,
-                    datasets:
-                };
-
-                bugChart = new Chart(ctx, {
-                    type: 'polarArea',
-                    data: data,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                                angleLines: { color: 'rgba(0, 0, 0, 0.05)' },
-                                ticks: {
-                                    display: false,
-                                    backdropColor: 'transparent'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    font: { size: 14, family: 'Inter' },
-                                    padding: 20
-                                }
-                            },
-                            tooltip: {
-                                bodyFont: { size: 14, family: 'Inter' },
-                                titleFont: { size: 16, family: 'Inter' }
-                            }
-                        },
-                        onClick: (e, elements) => {
-                            if (elements.length > 0) {
-                                const clickedLabel = labels[elements.index];
-                                renderBugList(clickedLabel);
-                            }
-                        }
+        ],
+        causes: {
+            game: {
+                title: "🎮 Core Game Architecture & Triggers",
+                content: `
+                    <p class="mb-4">The game itself has several features and underlying architectural traits that are highly sensitive and can trigger instability. These are often the hardest issues to solve as a player, as they are rooted in the game's code.</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Lock-Step Model:</strong> Like many Paradox games, AoW4 requires every player's computer to simulate the game identically. Any tiny difference (a single calculation) can cause a de-sync. This model is inherently brittle.</li>
+                        <li><strong>Simultaneous Turns:</strong> This is the most reported trigger. The complex task of processing multiple player actions at once puts immense stress on the synchronization system. Classic Turns are far more stable.</li>
+                        <li><strong>Cross-Play:</strong> The system that allows PC and console players to play together adds layers of network translation. It can cause issues even when all players are on the same platform.</li>
+                        <li><strong>Combat Mechanics:</strong> Spectating battles, random outcomes (RNG), and specific AI actions in combat can all fail to synchronize perfectly across all players.</li>
+                    </ul>
+                `
+            },
+            network: {
+                title: "🌐 Network Environment",
+                content: `
+                    <p class="mb-4">The quality and configuration of your internet connection (and the host's) is paramount. The game is very sensitive to any network hiccups.</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Connection Quality:</strong> Unstable Wi-Fi, high latency (ping), packet loss, and low upload speed (especially for the host) are major culprits. A wired Ethernet connection is strongly recommended.</li>
+                        <li><strong>Router Issues:</strong> Outdated router firmware or a full NAT table can block or delay game traffic. A simple router reboot can often help.</li>
+                        <li><strong>Firewall/Antivirus:</strong> Security software can mistakenly block AoW4's connection. Creating an exception for the game is often necessary.</li>
+                        <li><strong>ISP Issues:</strong> In some cases, your Internet Service Provider might be throttling gaming traffic or have routing issues that affect your connection to game servers.</li>
+                    </ul>
+                `
+            },
+            system: {
+                title: "💻 Your System: Hardware & Software",
+                content: `
+                    <p class="mb-4">Your PC's performance and software environment play a huge role. If your system can't keep up, it can easily fall out of sync.</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>SSD is Critical:</strong> The game performs frequent calculations that are written to and read from your drive. A slow Hard Disk Drive (HDD) is a major performance bottleneck and a known cause of issues. An SSD is essential.</li>
+                        <li><strong>Outdated Drivers:</strong> Old graphics and network drivers can cause crashes and instability. Always keep them updated.</li>
+                        <li><strong>Background Applications:</strong> Other programs consuming CPU, RAM, or network bandwidth can starve the game of the resources it needs to stay in sync.</li>
+                        <li><strong>System Health:</strong> General OS issues or stuck services can interfere with the game. A PC restart (not shutdown) can clear up many temporary problems.</li>
+                    </ul>
+                `
+            },
+            mods: {
+                title: "🛠️ Mods, DLCs, and Game Version",
+                content: `
+                    <p class="mb-4">Any modification to the base game, whether from official DLC or community mods, adds complexity and potential points of failure.</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Mods:</strong> The most common external cause of crashes and de-syncs. Mods that change gameplay, add units, or alter scripts are especially risky. Even UI mods can cause problems. Always test without mods first.</li>
+                        <li><strong>DLC Inconsistency:</strong> All players in a session should own and have the same DLCs enabled. Mismatches are a known cause of de-syncs in Paradox games.</li>
+                        <li><strong>Game Version Mismatch:</strong> Every single player MUST be on the exact same game version, including hotfixes or beta branches. There is no flexibility on this.</li>
+                        <li><strong>New Patches/DLCs:</strong> Major updates, while aiming to fix things, can temporarily introduce new instabilities until they are patched.</li>
+                    </ul>
+                `
+            }
+        },
+        checklist: [
+            {
+                category: "Essential Basics",
+                items: [
+                    { 
+                        title: "Verify Game Files", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Corrupted or missing game files can cause your game client to behave differently from other players or the server. This can lead to state mismatches, unpredictable errors, de-syncs, and crashes. Verifying files ensures your local installation is correct and matches the official version required for stable multiplayer.</p>
+                            <p class="mb-1"><strong>How (Steam):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Open your Steam Library.</li>
+                                <li>Right-click on Age of Wonders 4.</li>
+                                <li>Select 'Properties...'</li>
+                                <li>Go to the 'Installed Files' (or 'Local Files') tab.</li>
+                                <li>Click 'Verify integrity of game files...'.</li>
+                            </ol>
+                            <p class="mt-2 mb-1"><strong>How (GOG Galaxy):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Open GOG Galaxy and select Age of Wonders 4 from your 'Owned games' library.</li>
+                                <li>Click the settings icon (resembles sliders or a cogwheel) next to the Play button.</li>
+                                <li>Navigate to 'Manage installation'.</li>
+                                <li>Click 'Verify / Repair...'.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Restart PC & Router", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> A full PC restart clears temporary operating system glitches, stuck services, and memory issues that can affect game performance and stability. Restarting your modem and router clears their internal caches, resolves temporary IP conflicts, and can refresh your connection to your ISP, which is crucial for stable network communication.</p>
+                            <p class="mb-1"><strong>How (PC Restart):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Save any open work.</li>
+                                <li>Go to the Start Menu.</li>
+                                <li>Click the Power icon.</li>
+                                <li>Select 'Restart' (not 'Shut down', especially if Fast Startup is enabled in Windows, as Restart ensures a fuller refresh).</li>
+                            </ol>
+                            <p class="mt-2 mb-1"><strong>How (Modem/Router Restart):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Unplug the power cables from both your modem and your router.</li>
+                                <li>Wait for about 30-60 seconds.</li>
+                                <li>Plug the modem back in first. Wait for its lights to stabilize (usually 1-2 minutes).</li>
+                                <li>Plug the router back in. Wait for its lights to stabilize (usually 1-2 minutes).</li>
+                                <li>Test your internet connection on your PC.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Use a Solid State Drive (SSD)", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Age of Wonders 4 performs frequent calculations and data access operations. An SSD provides significantly faster read/write speeds compared to a traditional Hard Disk Drive (HDD). Using an HDD can lead to performance bottlenecks, where your system struggles to load game data or process updates quickly enough to stay in sync with other players, especially those on faster systems. This is a critical factor for smooth multiplayer.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Ensure Age of Wonders 4 is installed on an SSD. If it's currently on an HDD, you may need to move the installation.</li>
+                                <li>Most game launchers (Steam, GOG Galaxy) provide options to move installed games to a different drive/library location. Consult their support documentation for specific instructions. This usually involves creating a new library folder on your SSD if you don't have one, then using the launcher's function to move the game files.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Use a Wired Connection", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Wi-Fi connections are inherently more susceptible to interference, signal drops, and latency spikes from other devices or environmental factors. A wired Ethernet connection to your router provides a much more stable, consistent, and lower-latency connection, which is vital for multiplayer games that require precise synchronization like AoW4.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Obtain an Ethernet cable of appropriate length.</li>
+                                <li>Connect one end of the cable to an available LAN port on your router.</li>
+                                <li>Connect the other end to the Ethernet port on your PC or console.</li>
+                                <li>Your device should automatically detect the wired connection. You may want to disable Wi-Fi on your device to ensure it prioritizes the wired connection.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Ensure Same Game Version", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Every player in a multiplayer session MUST be running the exact same version of the game, including any patches, hotfixes, or beta branches. If game versions differ, the game clients are executing different code or using different game data, making synchronization impossible and leading to immediate and persistent de-syncs or inability to join games.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>All players should check their game version, usually visible on the main menu or in game settings.</li>
+                                <li>Ensure game clients (Steam, GOG Galaxy, console dashboards) are set to automatically update games.</li>
+                                <li>If participating in a beta branch, all players must opt into the same beta branch. If not, all players must be on the main public branch.</li>
+                                <li>Communicate clearly with your group before starting a session to confirm everyone's version.</li>
+                            </ol>`
                     }
-                });
-            }
-
-            function updateBugFilterButtons(activeFilter) {
-                bugFilters.forEach(button => {
-                    if (button.dataset.filter === activeFilter) {
-                        button.classList.remove('filter-inactive');
-                        button.classList.add('filter-active');
-                    } else {
-                        button.classList.remove('filter-active');
-                        button.classList.add('filter-inactive');
+                ]
+            },
+            {
+                category: "In-Game Settings",
+                items: [
+                    { 
+                        title: "Use Classic Turns", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Simultaneous turns, while faster, are a major stressor on AoW4's synchronization system due to the complexity of resolving multiple player actions concurrently. Classic Turns process actions sequentially, which is less demanding on the netcode and significantly more stable, reducing the likelihood of de-syncs.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>When setting up a new multiplayer game, or in the game settings for an ongoing session (if changeable), look for the 'Turn Mode' or 'Turn Order' option.</li>
+                                <li>Select 'Classic Turns' instead of 'Simultaneous Turns'.</li>
+                                <li>All players must agree to this change, as it affects game pace.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Disable Cross-Play", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Cross-play functionality introduces additional layers of network protocol translation and must account for differences between platforms (PC, Xbox, PlayStation). This added complexity can be a source of instability, even if all players are currently on the same platform (e.g., all on Steam). Disabling it can simplify the network environment.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Look for Cross-Play options in the game's main multiplayer settings or when setting up a multiplayer lobby.</li>
+                                <li>Toggle the Cross-Play option to 'Off' or 'Disabled'.</li>
+                                <li>Note: Disabling cross-play might have implications for achievements on some platforms.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Avoid Spectating Battles", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Spectating other players' manual battles is a commonly reported trigger for de-syncs. The increased network traffic required to transmit detailed combat data to observers, or potential issues in synchronizing the combat view, can lead to game state divergence.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Players should choose to auto-resolve battles or wait for them to conclude without entering spectator mode.</li>
+                                <li>If spectating is absolutely desired, some players suggest it might be more stable if only one person spectates at a time, but the safest approach is to avoid it altogether if experiencing issues.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Pace Your Actions", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Rapidly issuing multiple commands or clicking excessively, especially at the start of a turn or when the game is lagging, can overwhelm the game's ability to process and synchronize these actions cleanly. Allowing the game a moment to catch up can prevent input-related de-syncs.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Especially on simultaneous turns, wait a few seconds after a new turn begins before issuing commands. This allows the game to process initial turn calculations and AI moves.</li>
+                                <li>If you notice lag or unresponsiveness, pause your inputs and wait for the game to stabilize before continuing.</li>
+                                <li>Avoid spamming clicks on units or interface elements.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Lower Graphics Settings", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> While not a direct network fix, high graphics settings increase the load on your CPU and GPU. If your system is struggling to render the game and process game logic simultaneously, it can fall behind in synchronizing with other players, especially on less powerful PCs. Lowering settings frees up resources, potentially improving overall stability.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Go to the game's main menu or in-game pause menu and find 'Settings' or 'Options'.</li>
+                                <li>Navigate to 'Graphics Settings'.</li>
+                                <li>Reduce settings such as texture quality, shadow quality, anti-aliasing, effects detail, etc. You can try lowering individual settings or selecting a lower overall quality preset (e.g., Medium or Low).</li>
+                                <li>Apply the changes and observe if stability improves.</li>
+                            </ol>`
                     }
-                });
-            }
-             function updateSolutionFilterButtons(activeFilter) {
-                solutionFilters.forEach(button => {
-                    if (button.dataset.filter === activeFilter) {
-                        button.classList.remove('filter-inactive');
-                        button.classList.add('filter-active');
-                    } else {
-                        button.classList.remove('filter-active');
-                        button.classList.add('filter-inactive');
+                ]
+            },
+            {
+                category: "Group & Host Management",
+                items: [
+                    { 
+                        title: "Choose the Best Host", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> In many multiplayer setups, the host's PC and internet connection bear a significant portion of the load for managing the game session and relaying data. A host with a powerful PC (fast CPU, SSD, ample RAM) and a fast, stable, wired internet connection (especially good upload speed) is crucial for a smoother experience for all players.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Discuss within your group who has the best system specifications and internet connection.</li>
+                                <li>Have that player host the multiplayer game.</li>
+                                <li>If issues persist, try rotating hosts to see if a different host provides better stability.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Test with Fewer Players", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> More players in a game mean more data to synchronize, more complex interactions, and a higher load on the host and the network. If you're experiencing issues with a larger group, testing with fewer players can help determine if the problem is related to player count scalability.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>If you usually play with 4+ players, try a session with just 2 players.</li>
+                                <li>If this 2-player session is significantly more stable, the issues are likely exacerbated by higher player counts. While not a fix for larger games, it helps identify the sensitivity.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Communicate Actively", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Open communication within the group is vital. If one player is consistently lagging, experiencing unique visual glitches, or frequently causing de-sync notifications for others, their connection or system might be the primary source of instability for the session. Identifying this allows the group to focus troubleshooting efforts.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Encourage players to speak up immediately if they notice lag, get error messages, or see something unusual.</li>
+                                <li>If one player is repeatedly implicated, they should be prioritized for running through this checklist, especially network and system health checks.</li>
+                                <li>Be patient and collaborative; troubleshooting can be frustrating.</li>
+                            </ol>`
                     }
-                });
+                ]
+            },
+            {
+                category: "Mods & DLC",
+                items: [
+                    { 
+                        title: "Disable ALL Mods", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Mods are a very common source of instability, crashes, and de-syncs. They alter game files, scripts, and data, which can lead to conflicts with the base game, other mods, or multiplayer synchronization logic. Even UI mods can sometimes cause issues.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Before starting a multiplayer session where stability is a concern, all players should disable all installed mods. This is usually done through the game's launcher or an in-game mod manager.</li>
+                                <li>If the game is stable without mods, you can try re-enabling mods one by one (or in small, logical groups) in subsequent test sessions to identify the culprit(s). This requires patience and coordination among all players.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Ensure DLC Consistency", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> All players in a multiplayer session should ideally own and have the same set of DLCs enabled. Mismatched DLCs mean players are running different versions of game content and rules, which is a guaranteed cause of de-syncs in many strategy games.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>All players should communicate which DLCs they own and have enabled.</li>
+                                <li>The group should agree on a common set of DLCs to use for the session. If one player doesn't own a particular DLC, everyone else should disable that DLC for that game to ensure consistency.</li>
+                                <li>DLCs can usually be enabled/disabled via the game launcher or platform (Steam/GOG properties for the game).</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Perform a Clean Reinstall", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> If you suspect lingering mod files or corrupted game data even after verifying files and disabling mods, a clean reinstall can ensure you have a completely fresh, unaltered game installation. This removes any potentially problematic orphaned files.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li><strong>Backup Saves:</strong> First, back up any important save games. They are usually located in your 'Documents/Paradox Interactive/Age of Wonders 4/SaveGames' folder.</li>
+                                <li>Uninstall Age of Wonders 4 via your game launcher (Steam/GOG).</li>
+                                <li>Manually delete any leftover Age of Wonders 4 folders. Check these locations:
+                                    <ul class="list-disc list-inside ml-4">
+                                        <li>The game's installation directory (e.g., in 'Steam/steamapps/common/').</li>
+                                        <li>'Documents/Paradox Interactive/Age of Wonders 4' (this contains user settings, logs, and often mod data).</li>
+                                    </ul>
+                                </li>
+                                <li>Reinstall Age of Wonders 4 through your launcher.</li>
+                                <li>Test the game without mods first.</li>
+                            </ol>`
+                    }
+                ]
+            },
+            {
+                category: "Advanced Network",
+                items: [
+                    { 
+                        title: "Firewall & Antivirus Exceptions", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Firewall or antivirus software can sometimes mistakenly identify legitimate game network traffic as suspicious and block or slow it down. This can prevent connections to other players or game servers, or cause interruptions during gameplay.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Temporarily disable your firewall and antivirus for a quick test (ensure you're aware of the security implications and re-enable them afterwards). If this resolves the issue, you need to create exceptions.</li>
+                                <li><strong>Windows Defender Firewall:</strong> Search for 'Windows Defender Firewall' > 'Allow an app or feature through Windows Defender Firewall' > 'Change settings' > 'Allow another app...' > Browse to AoW4.exe (and potentially launcher executables) and add it. Ensure both 'Private' and 'Public' boxes are checked.</li>
+                                <li><strong>Third-Party Antivirus/Firewall:</strong> Consult your specific software's documentation for instructions on how to add application exceptions or trusted programs. You'll need to add AoW4.exe.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Router: UPnP or Port Forwarding", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Routers use Network Address Translation (NAT), which can block unsolicited incoming connections necessary for peer-to-peer (P2P) gaming. UPnP (Universal Plug and Play) allows games to automatically request port openings. If UPnP is unreliable or disabled, manual port forwarding is an alternative to ensure game traffic reaches your PC.</p>
+                            <p class="mb-1"><strong>How (UPnP):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Access your router's configuration page (usually by typing its IP address like 192.168.1.1 or 192.168.0.1 into a web browser).</li>
+                                <li>Look for UPnP settings (often in 'Advanced Settings' or 'WAN' sections) and ensure it's enabled.</li>
+                            </ol>
+                            <p class="mt-2 mb-1"><strong>How (Manual Port Forwarding - Advanced):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>This is more complex and router-specific. You'll need to find which TCP/UDP ports AoW4 uses (check official forums/support, as these can change).</li>
+                                <li>Assign a static local IP address to your PC.</li>
+                                <li>In your router settings, find the 'Port Forwarding' or 'Virtual Servers' section.</li>
+                                <li>Create rules to forward the required AoW4 ports to your PC's static IP address.</li>
+                                <li>It's generally advised to use either UPnP or manual port forwarding, not both simultaneously for the same application, to avoid conflicts.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Try a Public DNS", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Your Internet Service Provider's (ISP) default DNS servers can sometimes be slow, unreliable, or have outdated routing information. Public DNS services like Google DNS or Cloudflare DNS can offer faster domain name resolution and improved reliability, which might positively impact connection establishment to game servers or other players.</p>
+                            <p class="mb-1"><strong>How (Windows):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Open 'Control Panel' > 'Network and Internet' > 'Network and Sharing Center'.</li>
+                                <li>Click 'Change adapter settings'.</li>
+                                <li>Right-click your active network connection (Ethernet or Wi-Fi) and select 'Properties'.</li>
+                                <li>Select 'Internet Protocol Version 4 (TCP/IPv4)' and click 'Properties'.</li>
+                                <li>Select 'Use the following DNS server addresses:'.</li>
+                                <li>For Google DNS: Preferred DNS: 8.8.8.8, Alternate DNS: 8.8.4.4.</li>
+                                <li>For Cloudflare DNS: Preferred DNS: 1.1.1.1, Alternate DNS: 1.0.0.1.</li>
+                                <li>Click 'OK' on all windows. You may need to flush your DNS cache (open Command Prompt as admin and type <code>ipconfig /flushdns</code>).</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Disable IPv6 (As a Test)", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> While IPv6 is the newer internet protocol, its implementation and support can be inconsistent across ISPs, routers, and even game networking. In some cases, forcing your system to use the older, more established IPv4 protocol can resolve obscure connectivity issues if IPv6 is causing problems.</p>
+                            <p class="mb-1"><strong>How (Windows):</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Open 'Control Panel' > 'Network and Internet' > 'Network and Sharing Center'.</li>
+                                <li>Click 'Change adapter settings'.</li>
+                                <li>Right-click your active network connection (Ethernet or Wi-Fi) and select 'Properties'.</li>
+                                <li>In the list of items, uncheck 'Internet Protocol Version 6 (TCP/IPv6)'.</li>
+                                <li>Click 'OK'. A system restart might be beneficial.</li>
+                                <li><strong>Note:</strong> This is a troubleshooting step. If it doesn't help, or if you require IPv6 for other services, remember to re-enable it.</li>
+                            </ol>`
+                    },
+                    { 
+                        title: "Disable VPNs", 
+                        content: `
+                            <p class="mb-2"><strong>Why:</strong> Virtual Private Networks (VPNs) route your internet traffic through an intermediary server. While useful for privacy or bypassing regional restrictions, this typically adds latency (ping) and can interfere with the direct peer-to-peer connections or specific network protocols that many multiplayer games rely on. It can also cause NAT type issues.</p>
+                            <p class="mb-1"><strong>How:</strong></p>
+                            <ol class="list-decimal list-inside ml-4 text-sm">
+                                <li>Completely close or disconnect your VPN software before launching and playing Age of Wonders 4.</li>
+                                <li>Ensure no VPN browser extensions are active if you use them.</li>
+                                <li>The only exception might be if you are using a VPN specifically to solve an ISP throttling issue, but this is an advanced scenario. For general troubleshooting, disable VPNs.</li>
+                            </ol>`
+                    }
+                ]
             }
+        ]
+    };
 
-            bugFilters.forEach(button => {
-                button.addEventListener('click', () => {
-                    const filter = button.dataset.filter;
-                    renderBugList(filter);
-                });
-            });
-
-            solutionFilters.forEach(button => {
-                button.addEventListener('click', () => {
-                    const filter = button.dataset.filter;
-                    renderSolutionList(filter);
-                });
-            });
-
-            navTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const target = tab.dataset.tab;
-
-                    navTabs.forEach(t => {
-                        t.classList.remove('tab-active');
-                        t.classList.add('tab-inactive');
-                    });
-                    tab.classList.remove('tab-inactive');
-                    tab.classList.add('tab-active');
-
-                    contentSections.forEach(section => {
-                        if (section.id === `${target}-section`) {
-                            section.classList.remove('hidden');
-                        } else {
-                            section.classList.add('hidden');
-                        }
-                    });
-                });
-            });
-            
-            function initializeApp() {
-                navTabs.click(); // Default to Diagnose tab
-                renderBugList();
-                renderSolutionList();
-                renderAnalysisAccordion();
-                createBugChart();
+    const symptomGrid = document.getElementById('symptom-grid');
+    data.symptoms.forEach(symptom => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-50 rounded-xl p-6 hover:bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200';
+        card.innerHTML = `
+            <div class="flex items-center mb-3">
+                <span class="text-3xl mr-4">${symptom.icon}</span>
+                <h3 class="text-xl font-bold">${symptom.title}</h3>
+            </div>
+            <p class="text-gray-600">${symptom.description}</p>
+        `;
+        card.addEventListener('click', () => {
+            const detailsCard = card.querySelector('.details-card');
+            if (detailsCard) {
+                detailsCard.remove();
+            } else {
+                const allDetails = symptomGrid.querySelectorAll('.details-card');
+                allDetails.forEach(d => d.remove());
+                const newDetails = document.createElement('div');
+                newDetails.className = 'details-card mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 col-span-1 md:col-span-2 lg:col-span-3';
+                newDetails.innerHTML = `<p><strong>More Info:</strong> ${symptom.details}</p>`;
+                card.parentNode.insertBefore(newDetails, card.nextSibling);
             }
-
-            initializeApp();
         });
-    </script>
+        symptomGrid.appendChild(card);
+    });
+
+    const impactChartCtx = document.getElementById('impactChart').getContext('2d');
+    const impactChart = new Chart(impactChartCtx, {
+        type: 'doughnut', // Changed from 'bar' to 'doughnut'
+        data: {
+            labels: ['Simultaneous Turns', 'Mods', 'Cross-Play', 'Poor Host Connection', 'Wi-Fi vs Wired', 'High Player Count'],
+            datasets: [{
+                label: 'Reported Impact on Instability (Score/10)',
+                data: [9.5, 9.0, 8.0, 8.5, 7.5, 7.0],
+                backgroundColor: [ // Added array of colors for doughnut segments
+                    'rgba(255, 99, 132, 0.7)',  // Red
+                    'rgba(54, 162, 235, 0.7)', // Blue
+                    'rgba(255, 206, 86, 0.7)', // Yellow
+                    'rgba(75, 192, 192, 0.7)', // Teal
+                    'rgba(153, 102, 255, 0.7)',// Purple
+                    'rgba(255, 159, 64, 0.7)'  // Orange
+                ],
+                borderColor: [ // Optional: add distinct borders or a single darker border
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true, // Enabled legend
+                    position: 'top', // Position legend at the top
+                     labels: {
+                        boxWidth: 20,
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + '/10 Impact Score';
+                            }
+                            return label;
+                        }
+                    }
+                },
+                title: { // Added a title for the chart
+                    display: true,
+                    text: 'Relative Impact of Instability Triggers',
+                    padding: {
+                        top: 10,
+                        bottom: 10
+                    },
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+            // Removed scales and indexAxis as they are not applicable to doughnut charts
+        }
+    });
+
+    const causeDetails = document.getElementById('cause-details');
+    const causeDetailTitle = document.getElementById('cause-detail-title');
+    const causeDetailContent = document.getElementById('cause-detail-content');
+    
+    document.querySelectorAll('.cause-box[id^="cause-"]').forEach(box => {
+        box.addEventListener('click', (e) => {
+            const causeId = e.currentTarget.id.split('-')[1];
+            const causeData = data.causes[causeId];
+            if (causeData) {
+                causeDetailTitle.innerHTML = causeData.title;
+                causeDetailContent.innerHTML = causeData.content;
+                causeDetails.classList.remove('hidden');
+                causeDetails.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
+
+    const checklistTabs = document.getElementById('checklist-tabs');
+    const checklistContent = document.getElementById('checklist-content');
+
+    data.checklist.forEach((category, index) => {
+        const tab = document.createElement('button');
+        tab.className = `checklist-tab-button px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${index === 0 ? 'checklist-tab-active' : 'checklist-tab-inactive'}`;
+        tab.textContent = category.category;
+        tab.dataset.target = `content-${index}`;
+        checklistTabs.appendChild(tab);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.id = `content-${index}`;
+        contentDiv.className = `space-y-2 ${index > 0 ? 'hidden' : ''}`;
+        
+        category.items.forEach((item, itemIndex) => {
+            const accordionItem = document.createElement('div');
+            accordionItem.className = 'border border-gray-200 rounded-lg';
+            accordionItem.innerHTML = `
+                <button class="accordion-header w-full flex justify-between items-center text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors duration-150">
+                    <span class="font-semibold text-gray-800">${item.title}</span>
+                    <svg class="w-5 h-5 transform transition-transform duration-300 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4 border-t border-gray-200 text-gray-700 text-sm prose max-w-none">
+                        ${item.content}
+                    </div>
+                </div>
+            `;
+            contentDiv.appendChild(accordionItem);
+        });
+        checklistContent.appendChild(contentDiv);
+    });
+
+    checklistTabs.addEventListener('click', e => {
+        if (e.target.matches('.checklist-tab-button')) {
+            document.querySelectorAll('.checklist-tab-button').forEach(btn => {
+                btn.classList.remove('checklist-tab-active');
+                btn.classList.add('checklist-tab-inactive');
+            });
+            e.target.classList.add('checklist-tab-active');
+            e.target.classList.remove('checklist-tab-inactive');
+            
+            document.querySelectorAll('#checklist-content > div').forEach(div => {
+                div.classList.add('hidden');
+            });
+            const targetContent = document.getElementById(e.target.dataset.target);
+            if (targetContent) {
+                 targetContent.classList.remove('hidden');
+            }
+        }
+    });
+
+    checklistContent.addEventListener('click', e => {
+        const header = e.target.closest('.accordion-header');
+        if (header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('svg');
+            
+            if (!content.style.maxHeight) { 
+                 header.closest('#checklist-content > div').querySelectorAll('.accordion-content').forEach(accContent => {
+                    if (accContent !== content) {
+                        accContent.style.maxHeight = null;
+                        const otherIcon = accContent.previousElementSibling.querySelector('svg');
+                        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
+
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main > section');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.3
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('nav-active');
+                    link.classList.add('nav-inactive');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('nav-active');
+                        link.classList.remove('nav-inactive');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+});
+</script>
 </body>
 </html>
