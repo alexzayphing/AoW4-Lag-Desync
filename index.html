@@ -12,10 +12,10 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F8F6F1;
-            color: #334155;
+            background-color: #F8F6F1; /* Light cream background */
+            color: #334155; /* Slate-700 */
         }
-        .chart-container {
+       .chart-container {
             position: relative;
             margin: auto;
             height: 40vh;
@@ -23,25 +23,25 @@
             width: 100%;
             max-width: 500px;
         }
-        .tab-active {
-            background-color: #F59E0B;
+       .tab-active {
+            background-color: #F59E0B; /* Amber-500 */
             color: #ffffff;
         }
-        .tab-inactive {
-            background-color: #e2e8f0;
-            color: #475569;
+       .tab-inactive {
+            background-color: #e2e8f0; /* Slate-200 */
+            color: #475569; /* Slate-600 */
         }
-        .filter-active {
-            background-color: #475569;
+       .filter-active {
+            background-color: #475569; /* Slate-600 */
             color: #ffffff;
-            border-color: #475569;
+            border-color: #475569; /* Slate-600 */
         }
-        .filter-inactive {
+       .filter-inactive {
             background-color: transparent;
-            color: #475569;
-            border-color: #cbd5e1;
+            color: #475569; /* Slate-600 */
+            border-color: #cbd5e1; /* Slate-300 */
         }
-        .accordion-content {
+       .accordion-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
@@ -55,14 +55,14 @@
         <header class="text-center mb-12">
             <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">AoW4 Multiplayer Stability Guide</h1>
             <p class="max-w-3xl mx-auto text-lg text-slate-600">
-                An interactive guide based on r/AOW4 community findings to help you diagnose, solve, and understand common desyncs, lag, and crashes in multiplayer games.
+                An interactive guide based on community findings from r/AOW4, other Age of Wonders communities (Planetfall, AoW3), and broader online discussions. This guide aims to help you diagnose, solve, and understand common desyncs, lag, crashes, and connection issues in multiplayer games, with a primary focus on Age of Wonders 4.
             </p>
         </header>
 
-        <nav class="flex justify-center mb-12 rounded-lg p-1.5 bg-slate-200/60 max-w-md mx-auto">
-            <button data-tab="diagnose" class="nav-tab w-1/3 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Diagnose</button>
-            <button data-tab="solutions" class="nav-tab w-1/3 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Solutions</button>
-            <button data-tab="analysis" class="nav-tab w-1/3 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Analysis</button>
+        <nav class="flex justify-center mb-12 rounded-lg p-1.5 bg-slate-200/60 max-w-lg mx-auto">
+            <button data-tab="diagnose" class="nav-tab w-1/4 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Diagnose</button>
+            <button data-tab="solutions" class="nav-tab w-1/4 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Solutions</button>
+            <button data-tab="analysis" class="nav-tab w-1/4 py-2 px-4 text-center font-semibold rounded-md transition-colors duration-300">Analysis</button>
         </nav>
 
         <main>
@@ -70,7 +70,7 @@
                 <div>
                     <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Diagnose Your Issue</h2>
                     <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
-                        Multiplayer problems fall into three main categories. Click a category on the chart to filter the detailed bug list below and pinpoint the specific issues you're facing.
+                        Multiplayer problems generally fall into several categories. Click a category on the chart to filter the detailed bug list below and pinpoint the specific issues you're facing. This data includes issues reported primarily for AoW4, with some context from other AoW titles.
                     </p>
                     <div class="chart-container">
                         <canvas id="bugChart"></canvas>
@@ -83,6 +83,7 @@
                         <button data-filter="Desync" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Desyncs</button>
                         <button data-filter="Lag/Performance" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Lag & Performance</button>
                         <button data-filter="Crash" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Crashes</button>
+                        <button data-filter="Connection" class="bug-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">Connection Issues</button>
                     </div>
                     <div id="bug-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     </div>
@@ -93,7 +94,7 @@
                  <div>
                     <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Find Your Solution</h2>
                     <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
-                        Here is a comprehensive checklist of community-sourced workarounds. Filter by the problem you want to address to see the most relevant strategies.
+                        Here is a comprehensive checklist of community-sourced workarounds. Filter by the problem you want to address to see the most relevant strategies. These include general advice and game-specific tips.
                     </p>
                 </div>
                  <div>
@@ -102,6 +103,7 @@
                         <button data-filter="Desyncs" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Desyncs</button>
                         <button data-filter="Performance" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Performance</button>
                         <button data-filter="Crashes" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Crashes</button>
+                        <button data-filter="Connection" class="solution-filter px-4 py-2 text-sm font-medium border rounded-full transition-colors duration-200">For Connection</button>
                     </div>
                     <div id="solution-list" class="max-w-4xl mx-auto space-y-4">
                     </div>
@@ -112,7 +114,7 @@
                 <div>
                     <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Understand the Cause</h2>
                     <p class="text-center max-w-2xl mx-auto text-slate-600 mb-8">
-                        For those curious about the "why," this section summarizes the community's analysis on the likely root causes of these stability issues.
+                        For those curious about the "why," this section summarizes community analysis on the likely root causes of these stability issues, drawing from experiences across the Age of Wonders series.
                     </p>
                 </div>
                 <div id="analysis-accordion" class="max-w-3xl mx-auto space-y-4">
@@ -122,7 +124,7 @@
 
         <footer class="text-center mt-16 border-t border-slate-200 pt-8">
             <p class="text-slate-500">
-                Created based on analysis of discussions from the r/AOW4 community. This is an unofficial guide.
+                Created based on analysis of discussions from r/AOW4, other Age of Wonders communities, and various online forums. This is an unofficial guide.
             </p>
         </footer>
     </div>
@@ -130,40 +132,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            const bugsData = [
-                { category: 'Desync', manifestation: 'Combat desync with altered outcome', triggers: 'Enemy has 1 unit left; During/end of combat', impact: 'Forced battle replay; Invalidated player choices/skill; Frustration.' },
-                { category: 'Desync', manifestation: 'Turn-based desync', triggers: 'Simultaneous turns + player decision; End of turn; Observing AI combat; Rejoining game', impact: 'Frequent reloads; Game stuck "waiting for player"; Interrupted flow.' },
-                { category: 'Desync', manifestation: 'Game setting/contextual desync', triggers: 'Simultaneous turns mode; Large maps/high player/AI count; Windowed mode + focus loss; Mismatched game versions', impact: 'Limits game setup choices; Requires careful coordination.' },
-                { category: 'Desync', manifestation: 'Unrecoverable desync', triggers: 'Combat replay freezes/fails', impact: 'Forced to revert to older save; Loss of progress.' },
-                { category: 'Lag/Performance', manifestation: 'AI turn lag', triggers: 'AI processing turns, especially in late game', impact: 'Long wait times between player turns; Sluggish game pace.' },
-                { category: 'Lag/Performance', manifestation: 'Large battle lag', triggers: 'Battles with many units (e.g., 6-army, 9v9)', impact: 'Tactical combat becomes slow/unmanageable.' },
-                { category: 'Lag/Performance', manifestation: 'General sluggishness/stuttering', triggers: 'Mid/late game; Start of battles; Low FPS', impact: 'Degraded game fluidity; Poor responsiveness.' },
-                { category: 'Crash', manifestation: 'End-of-turn crash', triggers: 'All players end turn (post-hotfix noted)', impact: 'Session unplayable; Prevents game progression.' },
-                { category: 'Crash', manifestation: 'DLC-related crash', triggers: 'Cycling specific new faction leaders (e.g., Dragon Lords)', impact: 'Limits use of new content in multiplayer.' },
-                { category: 'Crash', manifestation: 'General crash / Infinite crash loop', triggers: 'Extended play (possible memory leak); Rejoining session (cross-play noted)', impact: 'Loss of progress; Session disruption; Inability to rejoin.' },
+            const bugsData =', impact: 'Forced battle replay; Invalidated player choices/skill; Frustration.[2]' },
+                { category: 'Desync', manifestation: 'Turn-based desync / "Waiting for Player"', triggers: 'Simultaneous turns + player decision [1]; End of turn [2]; Observing AI combat [1]; Rejoining game [3]; Game stuck "waiting for player".[1, 4]', impact: 'Frequent reloads; Interrupted flow.[1, 2]' },
+                { category: 'Desync', manifestation: 'Game setting/contextual desync', triggers: 'Simultaneous turns mode [2]; Large maps/high player/AI count [2, 3]; Windowed mode + focus loss [2]; Mismatched game versions.[2]', impact: 'Limits game setup choices; Requires careful coordination.' },
+                { category: 'Desync', manifestation: 'Unrecoverable desync / Game Freeze', triggers: 'Combat replay freezes/fails [1]; Player freezes, cannot give orders (AoW4).[5]', impact: 'Forced to revert to older save; Loss of progress [1]; Session blocked.[5]' },
+                { category: 'Desync', manifestation: 'Player state reset many turns back', triggers: 'Severe desync, one player affected while others are current (AoW4).[4]', impact: 'Significant loss of progress for one player, game imbalance.' },
+                { category: 'Lag/Performance', manifestation: 'AI turn lag', triggers: 'AI processing turns, especially in late game (AoW4, Planetfall).[1, 6, 7]', impact: 'Long wait times between player turns; Sluggish game pace.[1, 6]' },
+                { category: 'Lag/Performance', manifestation: 'Large battle lag', triggers: 'Battles with many units (e.g., 6-army, 9v9) (AoW4).[8]', impact: 'Tactical combat becomes slow/unmanageable.' },
+                { category: 'Lag/Performance', manifestation: 'General sluggishness/stuttering', triggers: 'Mid/late game; Start of battles; Low FPS (AoW4).[8]', impact: 'Degraded game fluidity; Poor responsiveness.' },
+                { category: 'Crash', manifestation: 'End-of-turn crash', triggers: 'All players end turn (post-hotfix noted for AoW4).[9]', impact: 'Session unplayable; Prevents game progression.[9]' },
+                { category: 'Crash', manifestation: 'DLC-related crash / Compatibility', triggers: 'Cycling specific new faction leaders (e.g., Dragon Lords in AoW4) [1]; Mismatch in DLC ownership between host/client after hotfix (AoW4).[10]', impact: 'Limits use of new content; Prevents joining games.[1, 10]' },
+                { category: 'Crash', manifestation: 'General crash / Infinite crash loop', triggers: 'Extended play (possible memory leak in AoW4) [8]; Rejoining session (cross-play noted for AoW4) [11]; Frequent crashes during manual fights (Planetfall).[12]', impact: 'Loss of progress; Session disruption; Inability to rejoin.[8, 11]' },
+                // Broader Age of Wonders series / General MP issues
+                { category: 'Connection', manifestation: 'Cannot connect to server / Offline only', triggers: 'Server-side issues; Network configuration problems (Planetfall).[13]', impact: 'Unable to access online multiplayer features.' },
+                { category: 'Connection', manifestation: 'Failed to connect to UDP relay / NAT issues', triggers: 'NAT configuration; Router firmware; ISP blocking (Planetfall PS4, AoW3).[14, 15]', impact: 'Cannot see/join online games; Limited MP experience.' },
+                { category: 'Connection', manifestation: 'Active MP sessions not showing / Internal Error', triggers: 'Paradox account sync issues; Server timeout retrieving session list (AoW4).[16]', impact: 'Unable to access ongoing games; Frustration.' },
+                { category: 'Connection', manifestation: 'Multiplayer disconnects from menu/lobby', triggers: 'Unknown connection stability issues, sometimes resolved by VPN (Planetfall, AoW4).[17]', impact: 'Kicked back to main menu even before joining a game.' },
+                { category: 'Desync', manifestation: 'Host/Player loses multiple turns of progress', triggers: 'Severe desync where save states diverge significantly (AoW4).[18]', impact: 'Game-breaking, requires replaying many turns or abandoning session.' },
             ];
 
-            const solutionsData = [
-                { issue: 'Desyncs', strategy: 'Use Classic Turns instead of Simultaneous', context: 'Generally more stable. The most highly recommended workaround for desyncs.', tradeOff: 'Slower game pace; less dynamic turns.' },
-                { issue: 'Desyncs', strategy: 'Ensure all players have identical game versions', context: 'Prevents baseline incompatibility. A critical first step; check for beta branches.', tradeOff: 'Requires player coordination.' },
-                { issue: 'Desyncs', strategy: 'Play on smaller maps with fewer players/AI', context: 'Reduces game complexity, which is correlated with fewer desyncs.', tradeOff: 'Limits epic-scale game ambitions.' },
-                { issue: 'Desyncs', strategy: 'Limit/avoid manual AI battles, especially if observed', context: 'Contentious but reported to improve stability by reducing a common trigger.', tradeOff: 'Reduces a core tactical feature of the game.' },
-                { issue: 'Desyncs', strategy: 'Reload game / Revert to previous turn', context: 'The most common immediate action to recover from a desync.', tradeOff: 'Interrupts game flow and causes minor loss of progress.' },
-                { issue: 'Performance', strategy: 'Install game on SSD', context: 'Drastically improves loading times and general performance. Highly recommended.', tradeOff: 'Hardware dependent.' },
-                { issue: 'Performance', strategy: 'Delete old/excessive save files', context: 'Reported to reduce AI turn times and general sluggishness.', tradeOff: 'Requires out-of-game file management.' },
-                { issue: 'Performance', strategy: 'Cap frame rate (e.g., at 60 FPS)', context: 'Can improve smoothness and prevent system overheating for some users.', tradeOff: 'None if your monitor refresh rate is 60Hz.' },
-                { issue: 'Performance', strategy: 'Reduce game resolution', context: 'Can provide a significant performance boost.', tradeOff: 'Minor visual quality trade-off.' },
-                { issue: 'Crashes', strategy: 'Play without mods (for troubleshooting)', context: 'The first step to diagnose if a mod is the cause of instability.', tradeOff: 'Misses out on mod-added content/features.' },
-                { issue: 'Crashes', strategy: 'Verify game file integrity via Steam', context: 'A standard troubleshooting step that can repair corrupted files causing crashes.', tradeOff: 'Takes a few minutes to run.' },
-                { issue: 'Crashes', strategy: 'Limit session length (if memory leak suspected)', context: 'A precautionary measure to mitigate crashes after extended play.', tradeOff: 'Inconvenient; does not solve the root cause.' },
+            const solutionsData =', tradeOff: 'Slower game pace; less dynamic turns.' },
+                { issue: 'Desyncs', strategy: 'Ensure all players have identical game versions & DLC status', context: 'Prevents baseline incompatibility. Check beta branches.[2] DLC mismatches can cause crashes.[10]', tradeOff: 'Requires player coordination.' },
+                { issue: 'Desyncs', strategy: 'Reload game / Revert to previous turn (AoW4)', context: 'Common immediate action for desyncs. AoW4 has auto-rollback features.[1, 2, 5]', tradeOff: 'Interrupts flow, minor progress loss. Reverting can sometimes go back multiple turns.[19]' },
+                { issue: 'Performance', strategy: 'Install game on SSD', context: 'Drastically improves loading and general performance (AoW4).[1, 8]', tradeOff: 'Hardware dependent.' },
+                { issue: 'Performance', strategy: 'Delete old/excessive save files (AoW4)', context: 'Reported to reduce AI turn times and sluggishness.[1, 8]', tradeOff: 'Out-of-game file management.' },
+                { issue: 'Crashes', strategy: 'Play without mods (for troubleshooting)', context: 'First step to diagnose if mods cause instability (General).[9]', tradeOff: 'Misses mod benefits.' },
+                { issue: 'Crashes', strategy: 'Verify game file integrity via Steam', context: 'Standard step, repairs corrupted files (General).[9]', tradeOff: 'Takes a few minutes.' },
+                // Broader / Network Related
+                { issue: 'Connection', strategy: 'Check NAT/Firewall/Port Forwarding', context: 'For general connection problems, often cited for P2P games like AoW3, Planetfall.[14, 15, 20, 21]', tradeOff: 'Can be technical to configure.' },
+                { issue: 'Connection', strategy: 'Try using a VPN', context: 'May help with routing issues if direct connection fails (AoW4, Planetfall).[16, 17]', tradeOff: 'May introduce its own latency; not a guaranteed fix.' },
+                { issue: 'Desyncs', strategy: 'Disable spectator mode for non-participants (AoW4)', context: 'Reduces network load and potential desync triggers, especially with many players.[5, 22]', tradeOff: 'Less engagement for waiting players.' },
+                { issue: 'Desyncs', strategy: 'Ensure host & all players have stable, sufficient internet (esp. upload)', context: 'Crucial for P2P games (AoW3) and general MP stability (AoW4).[18, 20]', tradeOff: 'May not be controllable by all players.' },
+                { issue: 'Performance', strategy: 'Update GPU drivers', context: 'General advice, can resolve some instability (General).[8, 23]', tradeOff: 'Usually straightforward.' },
+                { issue: 'Performance', strategy: 'Cap frame rate / Reduce resolution / Adjust VSync (AoW4, AoW3)', context: 'Can improve smoothness, prevent overheating.[8, 24]', tradeOff: 'Minor visual quality trade-off possible.' },
+                { issue: 'Crashes', strategy: 'Check for hardware issues (e.g., CPU overheating)', context: 'If problems are persistent and system-specific (Planetfall example).[12]', tradeOff: 'May require hardware diagnostics or repair.' },
+                { issue: 'Connection', strategy: 'Try creating a new Paradox account (AoW4)', context: 'Reported as a workaround if active MP sessions are not showing, suggesting account-specific glitches.[16]', tradeOff: 'Inconvenient, loses progress/settings tied to old account.' },
+                { issue: 'Desyncs', strategy: 'Play on smaller maps with fewer players/AI (AoW4)', context: 'Reduces game complexity, correlated with fewer desyncs.[2, 25]', tradeOff: 'Limits epic-scale game ambitions.' },
             ];
 
-            const analysisData = [
-                { title: 'Netcode & State Management', content: 'The wide variety of desync triggers (combat, turn processing, game settings) suggests a systemic challenge in keeping the game state perfectly synchronized across all players. The system may have multiple points of weakness where states can diverge without a robust way to reconcile them. Desyncs that alter combat outcomes are particularly critical, as they invalidate player skill and suggest the post-desync "replay" is not a true replay but a re-simulation that can produce different results.' },
-                { title: 'AI & Scalability Issues', content: 'Performance degrading in the mid-to-late game, especially during AI turns, points to underlying scalability problems. As the number of units, cities, and overall game complexity grows, the AI\'s decision-making becomes more computationally intensive. This creates a bottleneck that all players experience as lag, suggesting the AI algorithms are not fully optimized for a smooth multiplayer environment.' },
-                { title: 'Simultaneous Turns Conundrum', content: 'The "Simultaneous Turns" mode is consistently reported as a major source of desyncs. This feature requires the game to manage and resolve concurrent actions from multiple players into a single, coherent state. The high rate of failure implies that the mechanisms for collecting, ordering, and validating these actions are not robust enough, leading to race conditions or other inconsistencies.' },
-                { title: 'Patches & QA Complications', content: 'The emergence of new crashes or regressions in stability after patches or DLC releases indicates potential gaps in multiplayer-specific Quality Assurance (QA). The complexity of the multiplayer environment, with its many variables (player count, settings, cross-play), makes it difficult to test comprehensively, sometimes leading to unintended side effects from updates.' },
+            const analysisData =, suggesting systemic challenges in maintaining perfect game state synchronization. Older titles like AoW3 utilized P2P networking [20], making individual connections critical. Issues like one player\'s state being rolled back significantly while others remain current highlight severe sync problems in AoW4.[4] The "Guide to Fixing Out of Syncs" for AoW4 acknowledges these as game state mismatches.[5]' },
+                { title: 'AI & Scalability Issues (Series-Wide)', content: 'Performance often degrades in mid-to-late game, especially during AI turns. This is noted in AoW4 [1, 6] and was a known issue in Planetfall where late-game AI processing took considerable time.[7] As game complexity (units, cities) grows, AI decision-making becomes computationally intensive, creating bottlenecks experienced as lag by all players.' },
+                { title: 'Simultaneous Turns Challenges (AoW4 & AoW3)', content: 'Simultaneous turns, while speeding up gameplay, are a consistent source of desyncs in AoW4.[1, 2, 3] AoW3 also had complexities where simultaneous inputs were queued and processed sequentially, leading to perceived delays if AI was active.[20, 24] This highlights the difficulty in managing concurrent actions and resolving them into a coherent state for all players.' },
+                { title: 'External Factors & Connectivity (Series-Wide)', content: 'Many multiplayer problems stem from factors outside direct game code. NAT traversal, firewall configurations, and router issues are common culprits, especially in P2P models (AoW3, Planetfall).[14, 15, 21] ISP stability and even Paradox account-level glitches (AoW4 session list issues [16]) can prevent or disrupt play. VPNs sometimes offer workarounds, pointing to routing problems.[16, 17]' },
+                { title: 'Patches, DLCs & QA (Series-Wide)', content: 'New content releases (DLCs) or patches have sometimes introduced new bugs or regressions in stability across different AoW titles. AoW4 saw crashes linked to Dragon Lords DLC [1] and DLC compatibility issues post-hotfix.[10] Planetfall had patches addressing specific crashes and MP bugs.[26] This underscores the ongoing challenge of maintaining stability in evolving, complex strategy games.' },
             ];
+
 
             const bugList = document.getElementById('bug-list');
             const solutionList = document.getElementById('solution-list');
@@ -179,6 +192,7 @@
                     case 'Desync': return 'rgba(245, 158, 11, 0.7)'; // amber-500
                     case 'Lag/Performance': return 'rgba(99, 102, 241, 0.7)'; // indigo-500
                     case 'Crash': return 'rgba(239, 68, 68, 0.7)'; // red-500
+                    case 'Connection': return 'rgba(22, 163, 74, 0.7)'; // green-600
                     default: return 'rgba(107, 114, 128, 0.7)'; // gray-500
                 }
             }
@@ -188,6 +202,7 @@
                     case 'Desync': return 'rgba(245, 158, 11, 1)';
                     case 'Lag/Performance': return 'rgba(99, 102, 241, 1)';
                     case 'Crash': return 'rgba(239, 68, 68, 1)';
+                    case 'Connection': return 'rgba(22, 163, 74, 1)';
                     default: return 'rgba(107, 114, 128, 1)';
                 }
             }
@@ -197,13 +212,14 @@
                     case 'Desync': return 'border-amber-500';
                     case 'Lag/Performance': return 'border-indigo-500';
                     case 'Crash': return 'border-red-500';
+                    case 'Connection': return 'border-green-600';
                     default: return 'border-gray-500';
                 }
             }
 
             function renderBugList(filter = 'All') {
                 bugList.innerHTML = '';
-                const filteredBugs = filter === 'All' ? bugsData : bugsData.filter(b => b.category === filter);
+                const filteredBugs = filter === 'All'? bugsData : bugsData.filter(b => b.category === filter);
 
                 filteredBugs.forEach(bug => {
                     const card = document.createElement('div');
@@ -211,7 +227,7 @@
                     card.innerHTML = `
                         <h3 class="font-bold text-lg text-slate-800 mb-2">${bug.manifestation}</h3>
                         <div class="space-y-3 text-sm">
-                            <p><strong class="font-semibold text-slate-600">Triggers:</strong> <span class="text-slate-500">${bug.triggers}</span></p>
+                            <p><strong class="font-semibold text-slate-600">Triggers/Context:</strong> <span class="text-slate-500">${bug.triggers}</span></p>
                             <p><strong class="font-semibold text-slate-600">Impact:</strong> <span class="text-slate-500">${bug.impact}</span></p>
                         </div>
                     `;
@@ -226,9 +242,12 @@
                 const filterMap = {
                     'Desyncs': 'Desyncs',
                     'Performance': 'Performance',
-                    'Crashes': 'Crashes'
+                    'Crashes': 'Crashes',
+                    'Connection': 'Connection'
                 };
-                const filteredSolutions = filter === 'All' ? solutionsData : solutionsData.filter(s => s.issue === filterMap[filter]);
+                const filteredSolutions = filter === 'All'? solutionsData : solutionsData.filter(s => s.issue === filterMap[filter] |
+| s.issue === filter);
+
 
                 filteredSolutions.forEach(solution => {
                     const item = document.createElement('div');
@@ -286,17 +305,12 @@
 
             function createBugChart() {
                 const ctx = document.getElementById('bugChart').getContext('2d');
-                const labels = ['Desync', 'Lag/Performance', 'Crash'];
+                const labels =;
+                const counts = labels.map(label => bugsData.filter(b => b.category === label).length);
+
                 const data = {
                     labels: labels,
-                    datasets: [{
-                        label: 'Problem Frequency/Impact',
-                        data: [4, 3, 3], 
-                        backgroundColor: labels.map(l => getCategoryColor(l)),
-                        borderColor: labels.map(l => getCategoryHighlightColor(l)),
-                        borderWidth: 2,
-                        hoverBackgroundColor: labels.map(l => getCategoryHighlightColor(l)),
-                    }]
+                    datasets:
                 };
 
                 bugChart = new Chart(ctx, {
@@ -330,7 +344,7 @@
                         },
                         onClick: (e, elements) => {
                             if (elements.length > 0) {
-                                const clickedLabel = labels[elements[0].index];
+                                const clickedLabel = labels[elements.index];
                                 renderBugList(clickedLabel);
                             }
                         }
@@ -397,7 +411,7 @@
             });
             
             function initializeApp() {
-                navTabs[0].click();
+                navTabs.click(); // Default to Diagnose tab
                 renderBugList();
                 renderSolutionList();
                 renderAnalysisAccordion();
